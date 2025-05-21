@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>A Special Surprise for You! 💞</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+      color: #f9fafb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      position: relative;
+    }
+
+    #backgroundCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.9;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #f472b6, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 12px rgba(244, 114, 182, 0.6);
+      margin: 20px 0;
+      letter-spacing: 1.2px;
+    }
+
+    p {
+      font-size: 1.3rem;
+      font-weight: 300;
+      color: #e5e7eb;
+      text-shadow: 0 0 6px rgba(244, 114, 182, 0.4);
+      margin: 0 0 2rem;
+      max-width: 600px;
+      line-height: 1.8;
+    }
+
+    .btn {
+      background: linear-gradient(45deg, #f472b6, #a855f7);
+      padding: 15px 35px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(244, 114, 182, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+      z-index: 10;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(244, 114, 182, 0.7);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+    }
+
+    .btn:hover::before {
+      width: 200px;
+      height: 200px;
+    }
+
+    .surprise-image {
+      max-width: 300px;
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(244, 114, 182, 0.8);
+      z-index: 10;
+      position: relative;
+    }
+
+    .glow-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 340px;
+      height: 340px;
+      border: 2px solid rgba(244, 114, 182, 0.5);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9;
+      opacity: 0;
+    }
+
+    .heart-particle {
+      position: absolute;
+      font-size: 12px;
+      color: #f472b6;
+      text-shadow: 0 0 10px #a855f7;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .cursor-heart {
+      position: absolute;
+      font-size: 10px;
+      color: #f472b6;
+      text-shadow: 0 0 8px #a855f7;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .letter, .word {
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      p {
+        font-size: 1rem;
+        max-width: 90%;
+      }
+      .btn {
+        padding: 12px 24px;
+        font-size: 1rem;
+      }
+      .surprise-image {
+        max-width: 250px;
+      }
+      .glow-ring {
+        width: 280px;
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+  <h1 id="title">A Special Surprise for You! </h1>
+  <p id="message">Your ‘yes’ made my heart soar! I’m counting down the moments until our unforgettable day. Aur pass hojayegi?.</p>
+  <div class="image-container">
+    <img src="surprise.jpg" class="surprise-image" id="surprise-image" alt="Surprise">
+    <div class="glow-ring" id="glow-ring"></div>
+  </div>
+  <button class="btn" onclick="alert('Can’t wait to see you! ❤️')">I’m Thrilled! ❤️</button>
+
+  <script>
+    // Background animation with twinkling stars and heart-shaped connections
+    const bgCanvas = document.getElementById('backgroundCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    });
+
+    const stars = [];
+    const starCount = 60;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    class Star {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = Math.random() * bgCanvas.height;
+        this.radius = Math.random() * 2 + 1;
+        this.dx = (Math.random() - 0.5) * 0.4;
+        this.dy = (Math.random() - 0.5) * 0.4;
+        this.opacity = Math.random() * 0.5 + 0.3;
+        this.hue = Math.random() * 60 + 280;
+      }
+
+      update() {
+        this.x += this.dx;
+        this.y += this.dy;
+        this.opacity = 0.3 + Math.sin(Date.now() * 0.002 + this.x) * 0.2;
+
+        if (this.x < 0 || this.x > bgCanvas.width || this.y < 0 || this.y > bgCanvas.height) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        bgCtx.beginPath();
+        bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = `hsl(${this.hue}, 80%, 70%, ${this.opacity})`;
+        bgCtx.fill();
+      }
+    }
+
+    for (let i = 0; i < starCount; i++) {
+      stars.push(new Star());
+    }
+
+    function drawHeartShape(x, y, scale) {
+      bgCtx.save();
+      bgCtx.translate(x, y);
+      bgCtx.scale(scale, scale);
+      bgCtx.beginPath();
+      bgCtx.moveTo(0, -30);
+      bgCtx.bezierCurveTo(-30, -30, -40, 0, -40, 20);
+      bgCtx.bezierCurveTo(-40, 40, 0, 50, 0, 70);
+      bgCtx.bezierCurveTo(0, 50, 40, 40, 40, 20);
+      bgCtx.bezierCurveTo(40, 0, 30, -30, 0, -30);
+      bgCtx.strokeStyle = `rgba(244, 114, 182, 0.3)`;
+      bgCtx.lineWidth = 1;
+      bgCtx.stroke();
+      bgCtx.restore();
+    }
+
+    function connectStars() {
+      for (let a = 0; a < stars.length; a++) {
+        const dxMouse = stars[a].x - mouseX;
+        const dyMouse = stars[a].y - mouseY;
+        const distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+        if (distanceMouse < 100) {
+          drawHeartShape(stars[a].x, stars[a].y, 0.5);
+        }
+      }
+    }
+
+    function drawBackground() {
+      bgCtx.fillStyle = 'rgba(15, 23, 42, 0.1)';
+      bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+      stars.forEach(star => {
+        star.update();
+        star.draw();
+      });
+      connectStars();
+
+      requestAnimationFrame(drawBackground);
+    }
+    drawBackground();
+
+    // Heart particle effect on click
+    document.addEventListener('click', (e) => {
+      for (let i = 0; i < 8; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart-particle';
+        heart.innerHTML = '💖';
+        document.body.appendChild(heart);
+        heart.style.left = `${e.clientX}px`;
+        heart.style.top = `${e.clientY}px`;
+        anime({
+          targets: heart,
+          scale: [0, 1.2],
+          opacity: [1, 0],
+          translateX: anime.random(-40, 40),
+          translateY: anime.random(-40, 40),
+          rotate: anime.random(-45, 45),
+          duration: 1200,
+          easing: 'easeOutQuad',
+          complete: () => heart.remove()
+        });
+      }
+    });
+
+    // Button hover and click heart particle effect
+    const button = document.querySelector('.btn');
+    button.addEventListener('mouseenter', (e) => {
+      for (let i = 0; i < 5; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart-particle';
+        heart.innerHTML = '💖';
+        document.body.appendChild(heart);
+        const rect = button.getBoundingClientRect();
+        heart.style.left = `${rect.left + rect.width / 2}px`;
+        heart.style.top = `${rect.top + rect.height / 2}px`;
+        anime({
+          targets: heart,
+          scale: [0, 1],
+          opacity: [1, 0],
+          translateX: anime.random(-30, 30),
+          translateY: anime.random(-30, 30),
+          rotate: anime.random(-30, 30),
+          duration: 800,
+          easing: 'easeOutQuad',
+          complete: () => heart.remove()
+        });
+      }
+    });
+
+    button.addEventListener('click', () => {
+      anime({
+        targets: '.btn',
+        scale: [1, 0.9, 1],
+        duration: 300,
+        easing: 'easeInOutQuad'
+      });
+    });
+
+    // Cursor heart trail
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      const heart = document.createElement('div');
+      heart.className = 'cursor-heart';
+      heart.innerHTML = '💖';
+      document.body.appendChild(heart);
+      heart.style.left = `${e.clientX}px`;
+      heart.style.top = `${e.clientY}px`;
+      anime({
+        targets: heart,
+        scale: [0, 1],
+        opacity: [0.8, 0],
+        translateY: -20,
+        duration: 600,
+        easing: 'easeOutQuad',
+        complete: () => heart.remove()
+      });
+    });
+
+    // Image floating and glow ring animation
+    anime({
+      targets: '#surprise-image',
+      translateY: [0, -10, 0],
+      easing: 'easeInOutSine',
+      duration: 2000,
+      loop: true
+    });
+
+    anime({
+      targets: '#glow-ring',
+      opacity: [0, 0.5, 0],
+      rotate: 360,
+      easing: 'easeInOutSine',
+      duration: 3000,
+      loop: true
+    });
+
+    // Text animation (typewriter for title, wave for message)
+    const title = document.getElementById('title');
+    const message = document.getElementById('message');
+    title.innerHTML = title.textContent.split('').map(char => `<span class="letter">${char}</span>`).join('');
+    message.innerHTML = message.textContent.split(' ').map(word => `<span class="word">${word}</span>`).join(' ');
+
+    anime.timeline()
+      .add({
+        targets: '#title .letter',
+        opacity: [0, 1],
+        translateY: [10, 0],
+        easing: 'easeOutQuad',
+        duration: 800,
+        delay: (el, i) => 50 * i
+      })
+      .add({
+        targets: '#message .word',
+        translateY: [10, 0],
+        opacity: [0, 1],
+        easing: 'easeOutQuad',
+        duration: 1000,
+        delay: (el, i) => 100 * i
+      }, '-=600');
+  </script>
+</body>
+</html>

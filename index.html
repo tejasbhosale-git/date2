@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hey Hamster ❤️</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.2/vanilla-tilt.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: #1a0a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+      text-align: center;
+      color: #fff;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #backgroundCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.85;
+    }
+
+    .container {
+      background: rgba(26, 10, 26, 0.25);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 800px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 0, 127, 0.6);
+      animation: pulseBorder 3s infinite;
+      position: relative;
+      z-index: 2;
+      transform-style: preserve-3d;
+    }
+
+    .flower-image, .cat-image {
+      position: absolute;
+      z-index: 1;
+      filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8));
+      animation: shimmer 5s infinite;
+    }
+
+    .flower-image {
+      top: -50px;
+      left: -50px;
+    }
+
+    .cat-image {
+      bottom: -50px;
+      right: -50px;
+    }
+
+    .flower-image img, .cat-image img {
+      max-width: 120px;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 0, 127, 0.6);
+      transition: transform 0.3s ease;
+    }
+
+    .flower-image img:hover, .cat-image img:hover {
+      transform: scale(1.2) rotateY(180deg);
+    }
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-weight: 700;
+      font-size: 3.2rem;
+      background: linear-gradient(45deg, #ff007f, #ff69b4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 15px rgba(255, 0, 127, 0.8);
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 2;
+    }
+
+    h1 .heart {
+      display: inline-block;
+      animation: heartbeat 1.5s infinite, glitch 2s infinite;
+    }
+
+    p {
+      max-width: 700px;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      margin: 10px auto;
+      color: #ffd1dc;
+      text-shadow: 0 0 5px rgba(255, 0, 127, 0.6);
+      opacity: 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    .letter {
+      display: inline-block;
+      animation: flicker 3s infinite;
+    }
+
+    p:nth-child(2) .letter { animation-delay: 0.2s; }
+    p:nth-child(3) .letter { animation-delay: 0.4s; }
+    p:nth-child(4) .letter { animation-delay: 0.6s; }
+    p:nth-child(5) .letter { animation-delay: 0.8s; }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+      margin: 30px 0;
+      position: relative;
+      z-index: 2;
+    }
+
+    button {
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: 'Orbitron', sans-serif;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(255, 0, 127, 0.6);
+      transition: transform 0.2s;
+    }
+
+    .yes-btn {
+      background: linear-gradient(45deg, #ff007f, #ff69b4);
+      color: #fff;
+    }
+
+    .maybe-btn {
+      background: linear-gradient(45deg, #ff00ff, #ff1493);
+      color: #fff;
+    }
+
+    button:hover {
+      box-shadow: 0 8px 25px rgba(255, 0, 127, 0.8);
+    }
+
+    #maybe-message {
+      font-size: 1rem;
+      font-style: italic;
+      color: #ffd1dc;
+      text-shadow: 0 0 5px rgba(255, 0, 127, 0.6);
+      margin-top: 20px;
+      display: none;
+      position: relative;
+      z-index: 2;
+    }
+
+    .image-container {
+      margin-top: 30px;
+      margin-bottom: 40px;
+      display: none;
+      position: relative;
+      z-index: 2;
+    }
+
+    .image-container img {
+      max-width: 280px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+      filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8));
+      border: 2px solid rgba(255, 0, 127, 0.6);
+      transition: transform 0.3s ease;
+    }
+
+    .image-container img:hover {
+      transform: scale(1.2);
+    }
+
+    .particle-field {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb-particle {
+      position: absolute;
+      font-size: 1.5rem;
+      color: #ff007f;
+      opacity: 0;
+      animation: floatUp 6s infinite;
+    }
+
+    .cursor-comet {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: radial-gradient(circle, rgba(255, 0, 127, 0.6), transparent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .heart-trail {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #ff007f;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #ff69b4;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    @keyframes pulseBorder {
+      0%, 100% { border-color: rgba(255, 0, 127, 0.6); }
+      50% { border-color: rgba(255, 105, 180, 0.9); }
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translate(calc(2px * var(--random-x)), calc(2px * var(--random-y))); }
+    }
+
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.9; }
+    }
+
+    @keyframes shimmer {
+      0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 0, 127, 0.8)); }
+      50% { filter: drop-shadow(0 0 25px rgba(255, 105, 180, 1)); }
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh); opacity: 0.8; }
+      100% { transform: translateY(-100vh); opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 2.2rem;
+      }
+
+      p {
+        font-size: 1.1rem;
+        font-weight: 600;
+        padding: 0 10px;
+      }
+
+      button {
+        padding: 12px 25px;
+        font-size: 1rem;
+      }
+
+      .flower-image, .cat-image {
+        top: -30px;
+        left: -30px;
+      }
+
+      .flower-image img, .cat-image img {
+        max-width: 80px;
+      }
+
+      .image-container img {
+        max-width: 220px;
+      }
+    }
+
+    p.text-visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+  <div class="particle-field" id="particleField"></div>
+  <div class="container" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-perspective="1000">
+    <div class="flower-image">
+      <img src="tulip.jpg" alt="Romantic flowers" />
+    </div>
+    <div class="cat-image">
+      <img src="cat_apology.jpeg" alt="Cute cat" />
+    </div>
+
+    <h1>Hey Hamster <span class="heart" style="--random-x: ${Math.random() * 2 - 1}; --random-y: ${Math.random() * 2 - 1}">❤️</span></h1>
+
+    <p>
+      Sup! So this is your first surprise. Been working on this for a while—might not be perfect or beautiful,
+      but it’s made with all the effort I could put in.
+    </p>
+    <p>
+      The goal here isn’t to ask you out… it's to inform you that we're going on a date on <strong>22 May</strong>,
+      no matter what. There’s no way you can refuse. If you try to, I’ll have to kidnap you from your home 😂.
+    </p>
+    <p>
+      Jokes apart, from your precious time, please take out even just one hour for us?
+      I promise to make it the prettiest and most memorable day of your life.
+    </p>
+    <p>
+      Give it a try—not for me, but for this website and the effort behind it.
+      If you think we had a great first date, you can choose “Yes” to explore more.
+      You can even choose “Maybe” if you need time. This is just the start—
+      you’ll be redirected after choosing an option. 
+    </p>
+
+    <div class="button-container">
+      <button class="yes-btn" onclick="location.href='yes.html'">Yes</button>
+      <button class="maybe-btn" onclick="showMaybeMessage()">Maybe</button>
+    </div>
+
+    <div id="maybe-message">
+      Sorry cutie, you can't choose this option . Why don’t you try the first one?
+    </div>
+
+    <div class="image-container" id="maybe-image">
+      <img src="maybe_cat.jpeg" alt="cute image placeholder" />
+    </div>
+  </div>
+
+  <script>
+    // Pink particle field background
+    const bgCanvas = document.getElementById('backgroundCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+
+    const particles = [];
+    class Particle {
+      constructor() {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = Math.random() * bgCanvas.height;
+        this.size = Math.random() * 3 + 2;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > bgCanvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > bgCanvas.height) this.speedY *= -1;
+      }
+      draw() {
+        bgCtx.fillStyle = `rgba(255, 0, 127, ${Math.random() * 0.5 + 0.5})`;
+        bgCtx.beginPath();
+        bgCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        bgCtx.fill();
+      }
+    }
+
+    for (let i = 0; i < 80; i++) particles.push(new Particle());
+    function drawBackground() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 100) {
+            bgCtx.beginPath();
+            bgCtx.strokeStyle = `rgba(255, 105, 180, ${1 - distance / 100})`;
+            bgCtx.lineWidth = 1;
+            bgCtx.moveTo(particles[i].x, particles[i].y);
+            bgCtx.lineTo(particles[j].x, particles[j].y);
+            bgCtx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(drawBackground);
+    }
+    drawBackground();
+
+    // Pink orb particle animation
+    const particleField = document.getElementById('particleField');
+    function createOrb() {
+      const orb = document.createElement('div');
+      orb.className = 'orb-particle';
+      orb.innerHTML = Math.random() > 0.5 ? '💖' : '🌸';
+      orb.style.left = Math.random() * 100 + 'vw';
+      orb.style.animationDelay = Math.random() * 3 + 's';
+      particleField.appendChild(orb);
+      setTimeout(() => orb.remove(), 6000);
+    }
+    setInterval(createOrb, 400);
+
+    // Pink heart trail for title heart
+    function createHeartTrail() {
+      const heart = document.querySelector('.heart');
+      const rect = heart.getBoundingClientRect();
+      const trail = document.createElement('div');
+      trail.className = 'heart-trail';
+      trail.style.left = `${rect.left + rect.width / 2}px`;
+      trail.style.top = `${rect.top + rect.height / 2}px`;
+      document.body.appendChild(trail);
+      anime({
+        targets: trail,
+        scale: [0, 1.5],
+        opacity: [1, 0],
+        translateX: anime.random(-20, 20),
+        translateY: anime.random(-20, 20),
+        duration: 1000,
+        easing: 'easeOutQuad',
+        complete: () => trail.remove()
+      });
+    }
+    setInterval(createHeartTrail, 200);
+
+    // Parallax effect for images
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      anime({
+        targets: '.flower-image',
+        translateX: x,
+        translateY: y,
+        rotate: x / 2,
+        easing: 'easeOutQuad',
+        duration: 1000
+      });
+      anime({
+        targets: '.cat-image',
+        translateX: -x,
+        translateY: -y,
+        rotate: -x / 2,
+        easing: 'easeOutQuad',
+        duration: 1000
+      });
+    });
+
+    // Pink cursor comet effect
+    document.addEventListener('mousemove', (e) => {
+      const comet = document.createElement('div');
+      comet.className = 'cursor-comet';
+      document.body.appendChild(comet);
+      comet.style.left = `${e.clientX}px`;
+      comet.style.top = `${e.clientY}px`;
+      anime({
+        targets: comet,
+        scale: [0, 1.5],
+        opacity: [0.8, 0],
+        translateX: anime.random(-10, 10),
+        translateY: anime.random(-10, 10),
+        duration: 600,
+        easing: 'easeOutQuad',
+        complete: () => comet.remove()
+      });
+    });
+
+    // Pink button confetti effect
+    document.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        for (let i = 0; i < 20; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'heart-trail';
+          document.body.appendChild(particle);
+          particle.style.left = `${e.clientX}px`;
+          particle.style.top = `${e.clientY}px`;
+          particle.style.background = Math.random() > 0.5 ? '#ff007f' : '#ff69b4';
+          anime({
+            targets: particle,
+            scale: [0, 1.5],
+            opacity: [1, 0],
+            translateX: anime.random(-80, 80),
+            translateY: anime.random(-80, 80),
+            duration: 1400,
+            easing: 'easeOutQuad',
+            complete: () => particle.remove()
+          });
+        }
+      });
+    });
+
+    // Maybe message and image animation
+    function showMaybeMessage() {
+      const maybeMessage = document.getElementById('maybe-message');
+      const maybeImage = document.getElementById('maybe-image');
+      
+      maybeMessage.style.display = 'block';
+      maybeImage.style.display = 'block';
+      
+      anime({
+        targets: maybeMessage,
+        scale: [0.8, 1],
+        opacity: [0, 1],
+        translateY: [20, 0],
+        easing: 'easeOutElastic(1, 0.8)',
+        duration: 800
+      });
+      anime({
+        targets: maybeImage,
+        scale: [0.5, 1],
+        opacity: [0, 1],
+        rotate: [5, 0],
+        translateY: [20, 0],
+        easing: 'easeOutElastic(1, 0.8)',
+        duration: 1000
+      });
+      
+      maybeImage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Paragraph fade-in and scale animation
+    const paragraphs = document.querySelectorAll('.container p');
+    paragraphs.forEach((p, index) => {
+      // Ensure initial state for animation
+      p.style.opacity = '0';
+      p.style.transform = 'scale(0.95)';
+      
+      anime({
+        targets: p,
+        opacity: [0, 1],
+        scale: [0.95, 1],
+        translateY: [10, 0],
+        easing: 'easeOutCubic',
+        duration: 600, // Duration for each paragraph
+        delay: index * 200, // Staggered delay for each paragraph
+        complete: () => {
+          p.classList.add('text-visible');
+        }
+      });
+    });
+
+    // Log to confirm page load
+    console.log('Page loaded, text should be visible');
+  </script>
+</body>
+</html>

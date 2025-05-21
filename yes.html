@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>You Said Yes! 💖</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    #backgroundCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.85;
+    }
+
+    #heartCanvas {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      z-index: 10;
+      margin-bottom: 20px;
+    }
+
+    #floatingHeartsCanvas {
+      margin-top: 20px;
+      max-width: 400px;
+      width: 100%;
+      height: 200px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, #f472b6, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 12px rgba(244, 114, 182, 0.6);
+      margin: 20px 0;
+      letter-spacing: 1.2px;
+    }
+
+    .message-container {
+      max-width: 700px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+      margin: 10px auto 30px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .message-container:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 40px rgba(244, 114, 182, 0.3);
+    }
+
+    .message-line {
+      font-size: 1.2rem;
+      font-weight: 300;
+      color: #e5e7eb;
+      text-shadow: 0 0 6px rgba(244, 114, 182, 0.4);
+      margin: 8px 0;
+      line-height: 1.8;
+      transition: transform 0.2s, text-shadow 0.2s;
+      display: inline-block;
+    }
+
+    .message-line:hover {
+      transform: scale(1.05);
+      text-shadow: 0 0 12px rgba(244, 114, 182, 0.7);
+    }
+
+    .option-btn, .next-btn {
+      background: linear-gradient(45deg, #f472b6, #a855f7);
+      color: #fff;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(244, 114, 182, 0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .option-btn:hover, .next-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(244, 114, 182, 0.7);
+    }
+
+    .option-btn::before, .next-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+    }
+
+    .option-btn:hover::before, .next-btn:hover::before {
+      width: 200px;
+      height: 200px;
+    }
+
+    .btn-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      z-index: 10;
+    }
+
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #f472b6;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #a855f7;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .cursor-glow {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, rgba(244, 114, 182, 0.4), transparent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .letter {
+      display: inline-block;
+    }
+
+    .image-placeholder {
+      background: linear-gradient(45deg, #f472b6, #a855f7);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 400;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(244, 114, 182, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .image-placeholder:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(244, 114, 182, 0.5);
+    }
+
+    #header-image {
+      width: 100%;
+      max-width: 600px;
+      height: 150px;
+      margin: 20px 0;
+    }
+
+    #message-image {
+      width: 120px;
+      height: 120px;
+      flex-shrink: 0;
+    }
+
+    #footer-image {
+      width: 100%;
+      max-width: 500px;
+      height: 100px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .message-line {
+        font-size: 1rem;
+      }
+      .message-container {
+        max-width: 90%;
+        padding: 15px;
+        flex-direction: column;
+      }
+      #heartCanvas {
+        width: 150px;
+        height: 150px;
+      }
+      #floatingHeartsCanvas {
+        max-width: 300px;
+        height: 150px;
+      }
+      .option-btn, .next-btn {
+        padding: 12px 24px;
+        font-size: 1rem;
+      }
+      #header-image {
+        height: 100px;
+      }
+      #message-image {
+        width: 100px;
+        height: 100px;
+      }
+      #footer-image {
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="backgroundCanvas"></canvas>
+  
+  <h1 id="title">You Said Yes!</h1>
+  <div class="message-container">
+    <img src="hamster.gif" class="image-placeholder" id="message-image" alt="Heart or couple image">
+    <div>
+      <div class="message-line">I already knew, you didn't have any option! 💖</div>
+      <div class="message-line">Mere personality se kaun nahi impress hoga?</div>
+      <div class="message-line">Anyways, we can change dates if you want.</div>
+      <div class="message-line">Also, if you wanna plan the date, you can do it here itself!</div>
+      <div class="message-line">Choose whatever you want Ok, giving you options... can't wait to see you!</div>
+    </div>
+  </div>
+  <div class="btn-container">
+    <button class="option-btn" onclick="alert('Awesome! Drop me your availability on WhatsApp, and we’ll pick the perfect time. 💌')">Change Date</button>
+    <button class="option-btn" onclick="location.href='plan.html'">Plan the Date</button>
+  </div>
+  <button class="next-btn" onclick="location.href='surprise.html'">What’s Next? ✨</button>
+  
+
+  <script>
+    // Background animation with particles and connecting lines
+    const bgCanvas = document.getElementById('backgroundCanvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const particleCount = 80;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+
+      reset() {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = Math.random() * bgCanvas.height;
+        this.radius = Math.random() * 2 + 1;
+        this.dx = (Math.random() - 0.5) * 0.6;
+        this.dy = (0.3 - Math.random()) * 0.6;
+        this.hue = Math.random() * 60 + 280;
+      }
+
+      update() {
+        this.x += this.dx;
+        this.y += this.dy;
+
+        const dxMouse = this.x - mouseX;
+        const dyMouse = this.y - mouseY;
+        const distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+        if (distanceMouse < 100) {
+          this.dx += dxMouse * 0.0002;
+          this.dy += dyMouse * 0.0002;
+        }
+
+        if (this.x < 0 || this.x > bgCanvas.width || this.y < 0 || this.y > bgCanvas.height) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        bgCtx.beginPath();
+        bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = `hsl(${this.hue}, 80%, 70%)`;
+        bgCtx.fill();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    function connectParticles() {
+      for (let a = 0; a < particles.length; a++) {
+        for (let b = a + 1; b < particles.length; b++) {
+          const dx = particles[a].x - particles[b].x;
+          const dy = particles[a].y - particles[b].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          if (distance < 80) {
+            const opacity = 1 - distance / 80;
+            bgCtx.beginPath();
+            bgCtx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.15})`;
+            bgCtx.lineWidth = 1;
+            bgCtx.moveTo(particles[a].x, particles[a].y);
+            bgCtx.lineTo(particles[b].x, particles[b].y);
+            bgCtx.stroke();
+          }
+        }
+      }
+    }
+
+    let time = 0;
+    function drawBackground() {
+      bgCtx.fillStyle = 'rgba(15, 23, 42, 0.1)';
+      bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+      for (let x = 0; x < bgCanvas.width; x += 10) {
+        for (let y = 0; y < bgCanvas.height; y += 10) {
+          const offset = Math.sin((x + y + time) * 0.05) * 8;
+          bgCtx.fillStyle = `hsl(${280 + offset}, 70%, ${15 + offset / 3}%)`;
+          bgCtx.fillRect(x, y, 10, 10);
+        }
+      }
+      time += 0.04;
+
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      connectParticles();
+
+      requestAnimationFrame(drawBackground);
+    }
+    drawBackground();
+
+    // 2D heart with particle trail and glow
+    const heartCanvas = document.getElementById('heartCanvas');
+    const heartCtx = heartCanvas.getContext('2d');
+    heartCanvas.width = 200;
+    heartCanvas.height = 200;
+    const heartParticles = [];
+
+    class HeartParticle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 4 + 2;
+        this.opacity = 1;
+        this.vx = Math.random() * 1.5 - 0.75;
+        this.vy = Math.random() * 1.5 - 0.75;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.opacity -= 0.015;
+      }
+      draw() {
+        heartCtx.fillStyle = `rgba(244, 114, 182, ${this.opacity})`;
+        heartCtx.beginPath();
+        heartCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        heartCtx.fill();
+      }
+    }
+
+    function drawHeart(ctx, x, y, scale) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+      ctx.beginPath();
+      ctx.moveTo(0, -75);
+      ctx.bezierCurveTo(-75, -75, -100, 0, -100, 50);
+      ctx.bezierCurveTo(-100, 100, 0, 125, 0, 175);
+      ctx.bezierCurveTo(0, 125, 100, 100, 100, 50);
+      ctx.bezierCurveTo(100, 0, 75, -75, 0, -75);
+      ctx.fillStyle = '#f472b6';
+      ctx.shadowColor = '#f472b6';
+      ctx.shadowBlur = 25 * (1 + Math.sin(Date.now() * 0.002) * 0.2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function animateHeart() {
+      heartCtx.clearRect(0, 0, heartCanvas.width, heartCanvas.height);
+      const scale = 1 + Math.sin(Date.now() * 0.002) * 0.12;
+      drawHeart(heartCtx, heartCanvas.width / 2, heartCanvas.height / 2, scale);
+
+      if (Math.random() < 0.15) {
+        heartParticles.push(new HeartParticle(heartCanvas.width / 2, heartCanvas.height / 2));
+      }
+      heartParticles.forEach((p, i) => {
+        p.update();
+        p.draw();
+        if (p.opacity <= 0) heartParticles.splice(i, 1);
+      });
+
+      requestAnimationFrame(animateHeart);
+    }
+    animateHeart();
+
+    // Orbital floating hearts with dynamic scaling
+    const heartsCanvas = document.getElementById('floatingHeartsCanvas');
+    const heartsCtx = heartsCanvas.getContext('2d');
+    heartsCanvas.width = 400;
+    heartsCanvas.height = 200;
+    const hearts = [];
+
+    class Heart {
+      constructor() {
+        this.x = heartsCanvas.width / 2;
+        this.y = heartsCanvas.height / 2;
+        this.radius = Math.random() * 50 + 40;
+        this.angle = Math.random() * Math.PI * 2;
+        this.speed = Math.random() * 0.015 + 0.008;
+        this.size = Math.random() * 15 + 8;
+        this.opacity = 0;
+        this.targetOpacity = Math.random() * 0.4 + 0.3;
+        this.scale = 1;
+      }
+      update() {
+        this.angle += this.speed;
+        this.x = heartsCanvas.width / 2 + Math.cos(this.angle) * this.radius;
+        this.y = heartsCanvas.height / 2 + Math.sin(this.angle) * this.radius;
+        this.opacity = Math.min(this.opacity + 0.01, this.targetOpacity);
+        this.scale = 1 + Math.sin(this.angle * 2) * 0.1;
+      }
+      draw() {
+        heartsCtx.beginPath();
+        heartsCtx.ellipse(heartsCanvas.width / 2, heartsCanvas.height / 2, this.radius, this.radius * 0.5, 0, 0, Math.PI * 2);
+        heartsCtx.strokeStyle = `rgba(244, 114, 182, 0.15)`;
+        heartsCtx.stroke();
+
+        heartsCtx.font = `${this.size * this.scale}px Inter`;
+        heartsCtx.fillStyle = `rgba(244, 114, 182, ${this.opacity})`;
+        heartsCtx.textAlign = 'center';
+        heartsCtx.textBaseline = 'middle';
+        heartsCtx.fillText('💖', this.x, this.y);
+      }
+    }
+
+    for (let i = 0; i < 15; i++) hearts.push(new Heart());
+    function animateHearts() {
+      heartsCtx.clearRect(0, 0, heartsCanvas.width, heartsCanvas.height);
+      hearts.forEach(heart => {
+        heart.update();
+        heart.draw();
+      });
+      requestAnimationFrame(animateHearts);
+    }
+    animateHearts();
+
+    // Particle and confetti effect on click
+    document.addEventListener('click', (e) => {
+      for (let i = 0; i < 10; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        document.body.appendChild(particle);
+        particle.style.left = `${e.clientX}px`;
+        particle.style.top = `${e.clientY}px`;
+        particle.style.background = Math.random() > 0.5 ? '#f472b6' : '#a855f7';
+        anime({
+          targets: particle,
+          scale: [0, 1.5],
+          opacity: [1, 0],
+          translateX: anime.random(-50, 50),
+          translateY: anime.random(-50, 50),
+          duration: 1000,
+          easing: 'easeOutQuad',
+          complete: () => particle.remove()
+        });
+      }
+    });
+
+    // Button hover particle effect
+    const buttons = document.querySelectorAll('.option-btn, .next-btn');
+    buttons.forEach(button => {
+      button.addEventListener('mouseenter', (e) => {
+        for (let i = 0; i < 5; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle';
+          document.body.appendChild(particle);
+          const rect = button.getBoundingClientRect();
+          particle.style.left = `${rect.left + rect.width / 2}px`;
+          particle.style.top = `${rect.top + rect.height / 2}px`;
+          particle.style.background = Math.random() > 0.5 ? '#f472b6' : '#a855f7';
+          anime({
+            targets: particle,
+            scale: [0, 1.2],
+            opacity: [1, 0],
+            translateX: anime.random(-30, 30),
+            translateY: anime.random(-30, 30),
+            duration: 800,
+            easing: 'easeOutQuad',
+            complete: () => particle.remove()
+          });
+        }
+      });
+    });
+
+    // Cursor glow effect and mouse tracking
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      const glow = document.createElement('div');
+      glow.className = 'cursor-glow';
+      document.body.appendChild(glow);
+      glow.style.left = `${e.clientX}px`;
+      glow.style.top = `${e.clientY}px`;
+      anime({
+        targets: glow,
+        scale: [0, 1.2],
+        opacity: [0.8, 0],
+        duration: 600,
+        easing: 'easeOutQuad',
+        complete: () => glow.remove()
+      });
+    });
+
+    // Parallax effect synced with particles
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 15;
+      const y = (e.clientY / window.innerHeight - 0.5) * 15;
+      anime({
+        targets: '#heartCanvas',
+        translateX: x,
+        translateY: y,
+        easing: 'easeOutQuad',
+        duration: 800
+      });
+      anime({
+        targets: '#floatingHeartsCanvas',
+        translateX: -x / 2,
+        translateY: -y / 2,
+        easing: 'easeOutQuad',
+        duration: 800
+      });
+      anime({
+        targets: '.image-placeholder',
+        translateX: x / 2,
+        translateY: y / 2,
+        easing: 'easeOutQuad',
+        duration: 800
+      });
+    });
+
+    // Image placeholder animations
+    anime({
+      targets: '.image-placeholder',
+      opacity: [0, 1],
+      scale: [0.95, 1],
+      easing: 'easeOutQuad',
+      duration: 1000,
+      delay: anime.stagger(200, { start: 500 })
+    });
+
+    // Text animation
+    const title = document.getElementById('title');
+    const messageLines = document.querySelectorAll('.message-line');
+    title.innerHTML = title.textContent.split('').map(char => `<span class="letter">${char}</span>`).join('');
+
+    anime.timeline()
+      .add({
+        targets: '#title .letter',
+        opacity: [0, 1],
+        translateY: [20, 0],
+        easing: 'easeOutExpo',
+        duration: 1000,
+        delay: (el, i) => 40 * i
+      })
+      .add({
+        targets: '.message-line',
+        opacity: [0, 1],
+        translateY: [15, 0],
+        scale: [0.95, 1],
+        easing: 'easeOutExpo',
+        duration: 800,
+        delay: (el, i) => 150 * i
+      }, '-=600');
+  </script>
+</body>
+</html>

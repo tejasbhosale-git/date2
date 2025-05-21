@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan the Date 💖</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&display=swap');
+
+    body {
+      background: linear-gradient(180deg, #1a1a2e 0%, #4a1e4d 100%);
+      font-family: 'Cormorant Garamond', serif;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+      color: #f8e1e9;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.3)"/><circle cx="50" cy="50" r="1.5" fill="rgba(255,255,255,0.4)"/><circle cx="90" cy="20" r="1" fill="rgba(255,255,255,0.3)"/><circle cx="30" cy="80" r="1.2" fill="rgba(255,255,255,0.3)"/></svg>') repeat;
+      opacity: 0.3;
+      z-index: -1;
+      animation: twinkle 5s infinite ease-in-out;
+    }
+
+    h1 {
+      margin-top: 40px;
+      color: #ff99cc;
+      font-size: 3.2em;
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(255, 153, 204, 0.7);
+      animation: fadeIn 1.5s ease-in-out;
+      position: relative;
+    }
+
+    h1::after {
+      content: '💞';
+      position: absolute;
+      top: -10px;
+      right: -20px;
+      font-size: 0.5em;
+      animation: heartPulse 2s infinite ease-in-out;
+    }
+
+    p {
+      font-size: 1.3em;
+      max-width: 700px;
+      margin: 20px auto 40px;
+      line-height: 1.7;
+      color: #f4d4e0;
+      animation: slideUp 1.5s ease-in-out;
+    }
+
+    .option-group {
+      margin: 30px auto;
+      width: 90%;
+      max-width: 600px;
+      background: rgba(255, 245, 247, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 25px;
+      padding: 30px;
+      border: 1px solid rgba(255, 153, 204, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      animation: popIn 1.2s ease-out;
+    }
+
+    .option-group:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(255, 153, 204, 0.4);
+    }
+
+    .option-group h3 {
+      margin-bottom: 15px;
+      color: #ff99cc;
+      font-size: 1.8em;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px rgba(255, 153, 204, 0.5);
+    }
+
+    .option-group label {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      font-weight: 500;
+      font-size: 1.2em;
+      color: #f8e1e9;
+      cursor: pointer;
+      transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .option-group label:hover {
+      color: #ff99cc;
+      text-shadow: 0 0 8px rgba(255, 153, 204, 0.6);
+    }
+
+    .option-group input[type="radio"] {
+      margin-right: 12px;
+      accent-color: #ff99cc;
+      transform: scale(1.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .option-group input[type="radio"]:hover {
+      transform: scale(1.5);
+      box-shadow: 0 0 10px rgba(255, 153, 204, 0.7);
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-top: 20px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 153, 204, 0.3);
+      padding: 15px;
+      resize: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1em;
+      background: rgba(255, 245, 247, 0.05);
+      color: #f8e1e9;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #ff99cc;
+      box-shadow: 0 0 12px rgba(255, 153, 204, 0.5);
+    }
+
+    button {
+      margin-top: 40px;
+      padding: 15px 50px;
+      font-size: 1.3em;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      background: linear-gradient(45deg, #ff99cc, #ff6b6b);
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 15px rgba(255, 153, 204, 0.6);
+      animation: romanticPulse 2s infinite ease-in-out;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255, 153, 204, 0.8);
+    }
+
+    /* Selection Display */
+    #selection-display {
+      margin: 30px auto;
+      width: 90%;
+      max-width: 600px;
+      background: rgba(255, 245, 247, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255, 153, 204, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    #selection-display.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #selection-display h3 {
+      color: #ff99cc;
+      font-size: 1.8em;
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(255, 153, 204, 0.5);
+      margin-bottom: 15px;
+    }
+
+    #selection-display p {
+      font-size: 1.1em;
+      color: #f4d4e0;
+      margin: 10px 0;
+    }
+
+    /* Notification Styling */
+    #notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 153, 204, 0.9);
+      color: #fff;
+      padding: 15px 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateX(100%);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      max-width: 300px;
+      font-size: 1em;
+    }
+
+    #notification.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    #notification::before {
+      content: '💖';
+      font-size: 1.2em;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes romanticPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(255, 153, 204, 0.6), 0 0 20px rgba(255, 107, 107, 0.4); }
+      50% { box-shadow: 0 0 20px rgba(255, 153, 204, 0.9), 0 0 30px rgba(255, 107, 107, 0.7); }
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      h1 { font-size: 2.4em; }
+      p { font-size: 1.1em; }
+      .option-group, #selection-display { padding: 20px; }
+      button { padding: 12px 35px; font-size: 1.1em; }
+      .option-group h3, #selection-display h3 { font-size: 1.5em; }
+      .option-group label { font-size: 1em; }
+      #notification { max-width: 250px; font-size: 0.9em; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Plan the Date 💌</h1>
+  <p>Hey there, boss lady! Take the reins and let’s craft the most unforgettable date ever — your vibe, your rules! 😎</p>
+
+  <form class="option-group">
+    <h3>🗓️ Pick a Time:</h3>
+    <label><input type="radio" name="time" value="Morning Brunch"> Morning Brunch ☀️</label>
+    <label><input type="radio" name="time" value="Evening Sunset"> Evening Sunset 🌇</label>
+    <label><input type="radio" name="time" value="Night Vibes"> Night Vibes 🌙</label>
+
+    <h3>📍 Type of Place:</h3>
+    <label><input type="radio" name="place" value="Chill Picnic"> Chill Picnic 🧺</label>
+    <label><input type="radio" name="place" value="Fancy Dinner"> Fancy Dinner 🍽️</label>
+    <label><input type="radio" name="place" value="Movie Night"> Movie Night 🎥</label>
+    <label><input type="radio" name="place" value="Adventure Date"> Adventure Date 🛶</label>
+
+    <h3>🎶 Vibe Check:</h3>
+    <label><input type="radio" name="vibe" value="Music Walk"> Music & Walk 🎧</label>
+    <label><input type="radio" name="vibe" value="Gaming Lounge"> Gaming Lounge 🎮</label>
+    <label><input type="radio" name="vibe" value="Karaoke"> Karaoke 🎤</label>
+    <label><input type="radio" name="vibe" value="Stargazing"> Stargazing 🌌</label>
+
+    <h3>🍔 Food Preference:</h3>
+    <label><input type="radio" name="food" value="Pizza"> Pizza & Chill 🍕</label>
+    <label><input type="radio" name="food" value="Sushi"> Sushi Delight 🍣</label>
+    <label><input type="radio" name="food" value="Italian"> Italian Date 🍝</label>
+    <label><input type="radio" name="food" value="Dessert Crawl"> Dessert Crawl 🍧</label>
+
+    <h3>💬 Got any special wishes?</h3>
+    <textarea placeholder="Spill the tea... candles, fairy lights, or maybe a surprise? 😜"></textarea>
+
+    <button type="button" onclick="submitPlan()">Lock it in! 🚀</button>
+  </form>
+
+  <div id="selection-display">
+    <h3>Your Dream Date 💕</h3>
+    <p id="time-selection">Time: Not selected</p>
+    <p id="place-selection">Place: Not selected</p>
+    <p id="vibe-selection">Vibe: Not selected</p>
+    <p id="food-selection">Food: Not selected</p>
+    <p id="wishes-selection">Special Wishes: None</p>
+  </div>
+
+  <div id="notification"></div>
+
+  <script>
+    function updateSelections() {
+      const time = document.querySelector('input[name="time"]:checked')?.value || 'Not selected';
+      const place = document.querySelector('input[name="place"]:checked')?.value || 'Not selected';
+      const vibe = document.querySelector('input[name="vibe"]:checked')?.value || 'Not selected';
+      const food = document.querySelector('input[name="food"]:checked')?.value || 'Not selected';
+      const wishes = document.querySelector('textarea').value || 'None';
+
+      document.getElementById('time-selection').textContent = `Time: ${time}`;
+      document.getElementById('place-selection').textContent = `Place: ${place}`;
+      document.getElementById('vibe-selection').textContent = `Vibe: ${vibe}`;
+      document.getElementById('food-selection').textContent = `Food: ${food}`;
+      document.getElementById('wishes-selection').textContent = `Special Wishes: ${wishes}`;
+
+      const display = document.getElementById('selection-display');
+      if (!display.classList.contains('show')) {
+        display.classList.add('show');
+      }
+    }
+
+    function submitPlan() {
+      const time = document.querySelector('input[name="time"]:checked')?.value || 'Not selected';
+      const place = document.querySelector('input[name="place"]:checked')?.value || 'Not selected';
+      const vibe = document.querySelector('input[name="vibe"]:checked')?.value || 'Not selected';
+      const food = document.querySelector('input[name="food"]:checked')?.value || 'Not selected';
+      const wishes = document.querySelector('textarea').value || 'No special wishes';
+
+      // Update selection display
+      updateSelections();
+
+      // Show on-screen notification
+      const notification = document.getElementById('notification');
+      notification.textContent = `Date Plan Locked In! Ready for a magical evening!`;
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 3000);
+
+      // Browser notification (if supported)
+      if (Notification.permission === 'granted') {
+        new Notification('Date Plan Saved! 💖', {
+          body: `Time: ${time}\nPlace: ${place}\nVibe: ${vibe}\nFood: ${food}\nWishes: ${wishes}`,
+          icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23ff99cc" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+        });
+      } else if (Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification('Date Plan Saved! 💖', {
+              body: `Time: ${time}\nPlace: ${place}\nVibe: ${vibe}\nFood: ${food}\nWishes: ${wishes}`,
+              icon: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%23ff99cc" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'
+            });
+          }
+        });
+      }
+    }
+
+    // Add event listeners to update selections in real-time
+    document.querySelectorAll('input[type="radio"], textarea').forEach(element => {
+      element.addEventListener('change', updateSelections);
+    });
+  </script>
+</body>
+</html>
